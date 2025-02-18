@@ -86,12 +86,73 @@ class UCG2CGDataset(Dataset):
             'cg_pos': ucg_pos[self.scatter_idx] + cg_disp,
             'origin': origin,
         }
-    
 
-cg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"]
-ucg_idx_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz"
-ucg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"]
-dataset = UCG2CGDataset(cg_files=cg_files, ucg_files=ucg_files, ucg_index_file=ucg_idx_file)
+
+####################### LightningDataModules #######################
+
+import lightning as L
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
+from lightning.pytorch.utilities import CombinedLoader
+
+class UCG2CGDataModule(L.LightningDataModule):
+    def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str, scale: float = 1.0, batch_size: int = 64, num_workers: int = 4, train_size: float = 0.99):
+        super().__init__()
+        self.save_hyperparameters(ignore='cg_files')
+
+        self.cg_files       = cg_files
+        self.ucg_files      = ucg_files
+        self.ucg_index_file = ucg_index_file
+        self.scale          = scale
+        self.batch_size     = batch_size
+        self.num_workers    = num_workers
+        self.train_size     = train_size
+
+    def prepare_data(self):
+        # Download, IO, etc. Useful with shared filesystems
+        # Only called on 1 GPU/TPU in distributed
+        pass
+
+    def setup(self, stage: Optional[str] = None):
+        # Make assignments here (val/train/test split)
+        # Called on every process in DDP
+        self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
+ 
+        self.train_set = []
+        if stage in ['fit', 'train', None]:
+            self.train_set = UCG2CGDataset(self.cg_train_files, self.ucg_train_files, self.ucg_index_file, self.scale)
+        
+        self.valid_set = UCG2CGDataset(self.cg_valid_files, self.ucg_valid_files, self.ucg_index_file, self.scale)
+
+    def train_dataloader(self):
+        return DataLoader(self.train_set, shuffle=True,  batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True)
+    
+    def val_dataloader(self):
+        return DataLoader(self.valid_set, shuffle=False, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True)
+
+    def teardown(self, stage: Optional[str] = None):
+        # Clean up state after the trainer stops, delete files...
+        # Called on every process in DDP
+        pass
+
+
+
+datamodule = UCG2CGDataModule(
+    cg_files       = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"],
+    ucg_files      = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"],
+    ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
+    batch_size     = 64,
+    num_workers    = 8,
+    train_size     = 0.9,
+)
+
+print(datamodule)
+
+
+# cg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"]
+# ucg_idx_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz"
+# ucg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"]
+# dataset = UCG2CGDataset(cg_files=cg_files, ucg_files=ucg_files, ucg_index_file=ucg_idx_file)
 
 # print(dataset)
 # print(len(dataset))
