@@ -90,7 +90,7 @@ class UCG2CGDataset(Dataset):
 
 ####################### LightningDataModules #######################
 
-import lightning as L
+import pytorch_lightning as L
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from lightning.pytorch.utilities import CombinedLoader
@@ -116,8 +116,16 @@ class UCG2CGDataModule(L.LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         # Make assignments here (val/train/test split)
         # Called on every process in DDP
-        self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
- 
+        # self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
+
+        # Zip the paired lists together before splitting
+        paired_files = list(zip(self.cg_files, self.ucg_files))
+        # Split into train and validation sets
+        train_pairs, valid_pairs = train_test_split(paired_files, train_size=self.train_size, random_state=42)
+        # Unzip the pairs back into separate lists
+        self.cg_train_files, self.ucg_train_files = zip(*train_pairs)
+        self.cg_valid_files, self.ucg_valid_files = zip(*valid_pairs)
+
         self.train_set = []
         if stage in ['fit', 'train', None]:
             self.train_set = UCG2CGDataset(self.cg_train_files, self.ucg_train_files, self.ucg_index_file, self.scale)
@@ -145,7 +153,9 @@ datamodule = UCG2CGDataModule(
     num_workers    = 8,
     train_size     = 0.9,
 )
+datamodule.setup()
 
+datamodule.train_dataloader()
 print(datamodule)
 
 
