@@ -38,7 +38,7 @@ if __name__ == '__main__':
         cg_files       = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"],
         ucg_files      = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"],
         ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
-        batch_size     = 64,
+        batch_size     = 3,
         num_workers    = 1,
         train_size     = 0.9,
     )
@@ -72,11 +72,11 @@ if __name__ == '__main__':
     ################################# Start training session #####################################
 
     import pytorch_lightning as L
-    # from pytorch_lightning.callbacks import TQDMProgressBar
+    from pytorch_lightning.callbacks import TQDMProgressBar
     # from pytorch_lightning.loggers import TensorBoardLogger
 
     trainer = L.Trainer(
-        max_steps = 10,
+        max_steps = 100,
         log_every_n_steps  = 5,
         val_check_interval = 1.0,
         # limit_val_batches  = 1000,
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         # devices=1, 
         # num_nodes=8,
         # logger    = TensorBoardLogger(save_dir='./lit_logs/', name='dimers-C'),
-        # callbacks = [TQDMProgressBar(refresh_rate=100)],
+        callbacks = [TQDMProgressBar(refresh_rate=1)],
     )
 
     # trainer = L.Trainer(

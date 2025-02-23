@@ -116,15 +116,15 @@ class UCG2CGDataModule(L.LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         # Make assignments here (val/train/test split)
         # Called on every process in DDP
-        # self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
+        self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
 
         # Zip the paired lists together before splitting
-        paired_files = list(zip(self.cg_files, self.ucg_files))
-        # Split into train and validation sets
-        train_pairs, valid_pairs = train_test_split(paired_files, train_size=self.train_size, random_state=42)
-        # Unzip the pairs back into separate lists
-        self.cg_train_files, self.ucg_train_files = zip(*train_pairs)
-        self.cg_valid_files, self.ucg_valid_files = zip(*valid_pairs)
+        # paired_files = list(zip(self.cg_files, self.ucg_files))
+        # # Split into train and validation sets
+        # train_pairs, valid_pairs = train_test_split(paired_files, train_size=self.train_size, random_state=42)
+        # # Unzip the pairs back into separate lists
+        # self.cg_train_files, self.ucg_train_files = zip(*train_pairs)
+        # self.cg_valid_files, self.ucg_valid_files = zip(*valid_pairs)
 
         self.train_set = []
         if stage in ['fit', 'train', None]:
@@ -145,18 +145,18 @@ class UCG2CGDataModule(L.LightningDataModule):
 
 
 
-datamodule = UCG2CGDataModule(
-    cg_files       = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"],
-    ucg_files      = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"],
-    ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
-    batch_size     = 64,
-    num_workers    = 8,
-    train_size     = 0.9,
-)
-datamodule.setup()
+# datamodule = UCG2CGDataModule(
+#     cg_files       = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"],
+#     ucg_files      = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"],
+#     ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
+#     batch_size     = 64,
+#     num_workers    = 8,
+#     train_size     = 0.9,
+# )
+# datamodule.setup()
 
-datamodule.train_dataloader()
-print(datamodule)
+# datamodule.train_dataloader()
+# print(datamodule)
 
 
 # cg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"]
