@@ -35,9 +35,9 @@ from glob import glob
 
 if __name__ == '__main__':
     datamodule = UCG2CGDataModule(
-        cg_files       = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"],
-        ucg_files      = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"],
-        ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
+        cg_files       = ["sample-data/cg/pfpatch_000000000138.npz", "sample-data/cg/pfpatch_000000000214.npz", "sample-data/cg/pfpatch_000000000272.npz"],
+        ucg_files      = ["sample-data/ucg/pfpatch_000000000138_ucg.npz", "sample-data/ucg/pfpatch_000000000214_ucg.npz", "sample-data/ucg/pfpatch_000000000272_ucg.npz"],
+        ucg_index_file = "sample-data/cg/all_indices_per_cluster.npz",
         batch_size     = 64,
         num_workers    = 1,
         train_size     = 0.9,
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         ff_dim         = 32,
         num_heads      = 2,
         num_layers     = 1,
-        ucg_index_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz",
+        ucg_index_file = "sample-data/cg/all_indices_per_cluster.npz",
         dropout        = 0.0,
         learn_rate     = 1e-4,
     )
