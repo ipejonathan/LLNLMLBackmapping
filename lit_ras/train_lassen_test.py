@@ -64,7 +64,7 @@ trainer = L.Trainer(
     accelerator='gpu',
     devices=4,
     num_nodes=8,
-    logger    = TensorBoardLogger(save_dir='./lit_logs/', name='dimers-C'),
+    logger    = TensorBoardLogger(save_dir='./lit_logs/', name='ras-raf-test'),
     callbacks = [TQDMProgressBar(refresh_rate=100)],
 )
 
