@@ -68,12 +68,12 @@ trainer = L.Trainer(
     callbacks = [TQDMProgressBar(refresh_rate=100)],
 )
 
-print(f"Datamodule: {datamodule}")
-print(f"Noise Net: {noise_net}")
+# print(f"Datamodule: {datamodule}")
+# print(f"Noise Net: {noise_net}")
 
-print("Starting Training")
+# print("Starting Training")
 trainer.fit(
     noise_net, datamodule,
     # ckpt_path = ckpt_path,
 )
-print("Training Finished")
+# print("Training Finished")
