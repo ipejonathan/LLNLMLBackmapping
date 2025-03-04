@@ -56,7 +56,7 @@ from pytorch_lightning.callbacks import TQDMProgressBar
 from pytorch_lightning.loggers import TensorBoardLogger
 
 trainer = L.Trainer(
-    max_steps = 1_000_000,
+    max_steps = 1000000,
     log_every_n_steps  = 3000,
     val_check_interval = 1.0,
     # limit_val_batches  = 1000,
