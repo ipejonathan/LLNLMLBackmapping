@@ -93,7 +93,7 @@ class UCG2CGDataset(Dataset):
 import pytorch_lightning as L
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
-from lightning.pytorch.utilities import CombinedLoader
+# from pytorch_lightning.pytorch.utilities import CombinedLoader
 
 class UCG2CGDataModule(L.LightningDataModule):
     def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str, scale: float = 1.0, batch_size: int = 64, num_workers: int = 4, train_size: float = 0.99):
