@@ -8,7 +8,7 @@ from typing import Tuple, List, Optional
 ####################### Datasets #######################
 
 from torch.utils.data import Dataset
-from torch_scatter import scatter
+# from torch_scatter import scatter
 
 class UCG2CGDataset(Dataset):
     def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str, scale: float = 1.0):
