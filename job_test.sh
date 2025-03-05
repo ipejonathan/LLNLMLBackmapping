@@ -11,8 +11,9 @@
 # ulimit -n 20000
 
 # Load Python environment
-source /usr/workspace/hsu16/opence191/anaconda/bin/activate
-conda activate torch
+source /usr/workspace/ipe1/anaconda/bin/activate
+module load cuda/11.8.0
+conda activate opence-1.9.1
 
 # Just to record each node we're using in the job output log
 lrun -T1 hostname
