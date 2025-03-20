@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     import pytorch_lightning as L
     from pytorch_lightning.callbacks import TQDMProgressBar
-    # from pytorch_lightning.loggers import TensorBoardLogger
+    from pytorch_lightning.loggers import TensorBoardLogger
 
     trainer = L.Trainer(
         max_steps = 100,
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         accelerator='mps',
         # devices=1, 
         # num_nodes=8,
-        # logger    = TensorBoardLogger(save_dir='./lit_logs/', name='dimers-C'),
+        logger    = TensorBoardLogger(save_dir='./lit_logs/', name='dimers-C'),
         callbacks = [TQDMProgressBar(refresh_rate=1)],
     )
 
