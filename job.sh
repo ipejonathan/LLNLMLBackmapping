@@ -28,4 +28,4 @@ export MASTER_ADDR=$firsthost
 export MASTER_PORT=23456
 
 # Train
-lrun -T4 --gpubind=off python ./train_lassen.py
+lrun -T4 --gpubind=off python ./lit_ras/train_lassen.py
