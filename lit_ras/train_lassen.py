@@ -56,7 +56,7 @@ from pytorch_lightning.callbacks import TQDMProgressBar
 from pytorch_lightning.loggers import TensorBoardLogger
 
 trainer = L.Trainer(
-    max_steps = 1_000_000,
+    max_steps = 1000000,
     log_every_n_steps  = 3000,
     val_check_interval = 1.0,
     # limit_val_batches  = 1000,
@@ -64,16 +64,16 @@ trainer = L.Trainer(
     accelerator='gpu',
     devices=4,
     num_nodes=8,
-    logger    = TensorBoardLogger(save_dir='./lit_logs/', name='dimers-C'),
+    logger    = TensorBoardLogger(save_dir='./lit_logs/', name='ras-raf-test'),
     callbacks = [TQDMProgressBar(refresh_rate=100)],
 )
 
-print(f"Datamodule: {datamodule}")
-print(f"Noise Net: {noise_net}")
+# print(f"Datamodule: {datamodule}")
+# print(f"Noise Net: {noise_net}")
 
-print("Starting Training")
+# print("Starting Training")
 trainer.fit(
     noise_net, datamodule,
     # ckpt_path = ckpt_path,
 )
-print("Training Finished")
+# print("Training Finished")
