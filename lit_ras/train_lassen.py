@@ -46,8 +46,8 @@ noise_net = LitUCG2CGNoiseNet(
 )
 
 # Load model weights from a saved checkpoint
-# ckpt_path = './lit_logs/dimers-C/version_0/checkpoints/epoch=206-step=121302.ckpt'
-# noise_net = LitUCG2CGNoiseNet.load_from_checkpoint(ckpt_path)
+ckpt_path = './lit_logs/ras-raf-test/version_2/checkpoints/epoch=44-step=14625.ckpt'
+noise_net = LitUCG2CGNoiseNet.load_from_checkpoint(ckpt_path)
 
 ################################# Start training session #####################################
 
