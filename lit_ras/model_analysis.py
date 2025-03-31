@@ -55,17 +55,18 @@ def generate_rmsd_plot(num_steps, file_name):
     val_loader = datamodule.val_dataloader()
 
     noise_net.eval()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     for batch in val_loader:
-        ucg_pos = batch["ucg_pos"].to(device)  # shape: (B, N, 3)
+        ucg_pos = batch["ucg_pos"]  # shape: (B, N, 3)
         cg_pos = batch["cg_disp"].numpy()    # shape: (B, N, 3)
 
         with torch.no_grad():
             pred_cg_pos = noise_net.generate(ucg_pos, num_steps)
             
         pred_cg_pos = pred_cg_pos[:,-1,:,:]
-        pred_cg_pos = pred_cg_pos.cpu().numpy()
+        # pred_cg_pos = pred_cg_pos.cpu().numpy()
+        pred_cg_pos = pred_cg_pos.numpy()
 
         batch_rmsds = DataUtils.rmsd(pred_cg_pos, cg_pos)  # shape: (B,)
         all_rmsds.extend(batch_rmsds.tolist())
