@@ -145,15 +145,15 @@ class UCG2CGDataModule(L.LightningDataModule):
 
 
 
-datamodule = UCG2CGDataModule(
-    cg_files       = ["sample-data/cg/pfpatch_000000000138.npz", "sample-data/cg/pfpatch_000000000214.npz", "sample-data/cg/pfpatch_000000000272.npz"],
-    ucg_files      = ["sample-data/ucg/pfpatch_000000000138_ucg.npz", "sample-data/ucg/pfpatch_000000000214_ucg.npz", "sample-data/ucg/pfpatch_000000000272_ucg.npz"],
-    ucg_index_file = "sample-data/cg/all_indices_per_cluster.npz",
-    batch_size     = 64,
-    num_workers    = 8,
-    train_size     = 0.9,
-)
-datamodule.setup()
+# datamodule = UCG2CGDataModule(
+#     cg_files       = ["sample-data/cg/pfpatch_000000000138.npz", "sample-data/cg/pfpatch_000000000214.npz", "sample-data/cg/pfpatch_000000000272.npz"],
+#     ucg_files      = ["sample-data/ucg/pfpatch_000000000138_ucg.npz", "sample-data/ucg/pfpatch_000000000214_ucg.npz", "sample-data/ucg/pfpatch_000000000272_ucg.npz"],
+#     ucg_index_file = "sample-data/cg/all_indices_per_cluster.npz",
+#     batch_size     = 64,
+#     num_workers    = 8,
+#     train_size     = 0.9,
+# )
+# datamodule.setup()
 
 # datamodule.train_dataloader()
 # print(datamodule)

@@ -65,8 +65,7 @@ class TransformerBackbone(nn.Module):
         self.lin_out = nn.Linear(dim, init_dim-3)
 
     def _process_input(self, ucg_pos: Tensor, cg_disp: Tensor) -> Tensor:
-        ucg_sizes = self.ucg_sizes[:ucg_pos.size(1)]
-
+        ucg_sizes = self.ucg_sizes[:ucg_pos.shape[1]]
         split_cg_disp = cg_disp.split(ucg_sizes, dim=1)
         
         pad_ammts = max(ucg_sizes) - np.array(ucg_sizes)
@@ -173,10 +172,11 @@ class LitUCG2CGNoiseNet(L.LightningModule):
     
     def generate(self, ucg_pos, num_steps):
         device  = ucg_pos.device
-        B       = ucg_pos.size(0)
-        num_cgs = 2897
-        if ucg_pos.size(1) == 100: num_cgs = 1819
-        if ucg_pos.size(1) == 250: num_cgs = 4716
+        B       = ucg_pos.shape[0]
+        # num_cgs = 2897
+        num_cgs = 751
+        # if ucg_pos.size(1) == 100: num_cgs = 1819
+        # if ucg_pos.size(1) == 250: num_cgs = 4716
         
         ts     = torch.linspace(self.diffuser.t_max, self.diffuser.t_min, num_steps+1, device=device).view(-1, 1, 1, 1)
         ts     = ts.expand(-1, B, 1, 1)
