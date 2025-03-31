@@ -55,7 +55,7 @@ def generate_rmsd_plot(num_steps, file_name):
     val_loader = datamodule.val_dataloader()
 
     noise_net.eval()
-    device = torch.device()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     for batch in val_loader:
         ucg_pos = batch["ucg_pos"].to(device)  # shape: (B, N, 3)
