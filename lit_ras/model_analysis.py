@@ -77,6 +77,7 @@ def generate_rmsd_plot(num_steps, file_name):
     plot_rmsds(all_rmsds, title=f"Validation RMSD Distribution - {num_steps} steps", filename=file_name)
 
 
-generate_rmsd_plot(num_steps=50, file_name="val_rmsds_50.png")
-generate_rmsd_plot(num_steps=100, file_name="val_rmsds_100.png")
-generate_rmsd_plot(num_steps=500, file_name="val_rmsds_500.png")
+generate_rmsd_plot(num_steps=1, file_name="val_rmsds_1.png")
+print("job finished")
+# generate_rmsd_plot(num_steps=100, file_name="val_rmsds_100.png")
+# generate_rmsd_plot(num_steps=500, file_name="val_rmsds_500.png")
