@@ -74,7 +74,8 @@ def generate_rmsd_plot(num_steps, file_name):
     all_rmsds = np.array(all_rmsds)
 
     # Plotting
-    plot_rmsds(all_rmsds, title=f"Validation RMSD Distribution - {num_steps} steps", filename=file_name)
+    title = "Validation RMSD Distribution - " + str(num_steps) + " steps"
+    plot_rmsds(all_rmsds, title=title, filename=file_name)
 
 
 generate_rmsd_plot(num_steps=500, file_name="val_rmsds_500.png")
