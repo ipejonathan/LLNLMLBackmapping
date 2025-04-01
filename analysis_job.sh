@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 #BSUB -nnodes 8             # Number of nodes
 #BSUB -W 12:00              # Walltime
 #BSUB -G cancer             # Account
