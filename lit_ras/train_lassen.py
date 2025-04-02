@@ -46,8 +46,8 @@ noise_net = LitUCG2CGNoiseNet(
 )
 
 # Load model weights from a saved checkpoint
-ckpt_path = './lit_logs/ras-raf-test/version_2/checkpoints/epoch=44-step=14625.ckpt'
-noise_net = LitUCG2CGNoiseNet.load_from_checkpoint(ckpt_path)
+# ckpt_path = './lit_logs/ras-raf-test/version_2/checkpoints/epoch=44-step=14625.ckpt'
+# noise_net = LitUCG2CGNoiseNet.load_from_checkpoint(ckpt_path)
 
 ################################# Start training session #####################################
 
@@ -62,7 +62,7 @@ trainer = L.Trainer(
     # limit_val_batches  = 1000,
     strategy  ='ddp',
     accelerator='gpu',
-    devices=4,
+    devices='auto',
     num_nodes=8,
     logger    = TensorBoardLogger(save_dir='./lit_logs/', name='ras-raf-test'),
     callbacks = [TQDMProgressBar(refresh_rate=100)],
