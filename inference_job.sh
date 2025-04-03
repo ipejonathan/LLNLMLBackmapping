@@ -8,9 +8,9 @@
 #BSUB -alloc_flags ipisolate
 
 # Environment setup
-module load cuda/11.8
-source /usr/workspace/hsu16/opence191/anaconda/bin/activate
-conda activate torch
+source /usr/workspace/ipe1/anaconda/bin/activate
+module load cuda/11.8.0
+conda activate opence-1.9.1
 
 # Distributed setup
 lrun -T1 hostname
