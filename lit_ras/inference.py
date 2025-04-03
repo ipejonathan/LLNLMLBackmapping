@@ -38,7 +38,7 @@ if __name__ == '__main__':
     loader = DataLoader(ucg_pos_traj, batch_size=32)
 
     # Model setup
-    ucg2cg_generator = LitUCG2CGNoiseNet.load_from_checkpoint(args.cg_generator, ucg_index_file='../sample-data/cg/all_indices_per_cluster.npz').to(device)
+    ucg2cg_generator = LitUCG2CGNoiseNet.load_from_checkpoint(args.cg_generator, ucg_index_file="/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz").to(device)
     ucg2cg_generator.eval()
 
     # Start generations
