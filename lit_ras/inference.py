@@ -5,7 +5,7 @@ import argparse
 from torch.nn.parallel import DistributedDataParallel as DDP
 from tqdm import tqdm
 from torch.utils.data import DataLoader
-from lit_ras.modules.diffusion_model import LitUCG2CGNoiseNet
+from modules.diffusion_model import LitUCG2CGNoiseNet
 
 # LC hack for distributed setup
 if 'OMPI_COMM_WORLD_RANK'       in os.environ: os.environ["RANK"]       = os.environ['OMPI_COMM_WORLD_RANK']
