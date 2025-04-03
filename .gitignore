@@ -1,3 +1,8 @@
+.DS_Store
+lightning_logs/
+lit_logs/
+lit_ras/.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
