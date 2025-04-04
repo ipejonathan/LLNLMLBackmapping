@@ -39,9 +39,9 @@ noise_net = LitUCG2CGNoiseNet(
     dim            = 512,
     ff_dim         = 2048,
     num_heads      = 8,
-    num_layers     = 8,
+    num_layers     = 4,
     ucg_index_file = "/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz",
-    dropout        = 0.5,
+    dropout        = 0.0,
     learn_rate     = 1e-4,
 )
 
