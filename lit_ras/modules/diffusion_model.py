@@ -159,7 +159,7 @@ class LitUCG2CGNoiseNet(L.LightningModule):
     def training_step(self, batch, *args):
         loss = self._get_loss(batch['ucg_pos'], batch['cg_disp'])
         bsize = batch['ucg_pos'].size(0)
-        self.log('train_loss', loss, prog_bar=True, batch_size=bsize, logger=True, on_epoch=True, on_step=True) # TODO: (sync_dist=) but causes extra overhead
+        self.log('train_loss', loss, prog_bar=True, batch_size=bsize, logger=True, on_epoch=True, on_step=True, sync_dist=True) # TODO: (sync_dist=) but causes extra overhead
         return loss
 
     def validation_step(self, batch, *args):
