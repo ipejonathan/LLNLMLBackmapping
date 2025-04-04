@@ -2,7 +2,7 @@
 #BSUB -nnodes 8             # Number of nodes
 #BSUB -W 12:00              # Walltime
 #BSUB -G cancer             # Account
-#BSUB -J ucg2cg
+#BSUB -J ucg2cg-experiment4
 #BSUB -o ucg2cg-%J.log
 #BSUB -q pbatch             # Queue to use
 #BSUB -alloc_flags ipisolate

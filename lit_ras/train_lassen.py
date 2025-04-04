@@ -36,12 +36,12 @@ datamodule = UCG2CGDataModule(
 
 noise_net = LitUCG2CGNoiseNet(
     init_dim       = 120, # 39x3 + 1x3
-    dim            = 1024,
-    ff_dim         = 4096,
+    dim            = 512,
+    ff_dim         = 2048,
     num_heads      = 8,
-    num_layers     = 16,
+    num_layers     = 8,
     ucg_index_file = "/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz",
-    dropout        = 0.0,
+    dropout        = 0.5,
     learn_rate     = 1e-4,
 )
 
@@ -57,7 +57,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 
 trainer = L.Trainer(
     max_steps = 1000000,
-    log_every_n_steps  = 3000,
+    log_every_n_steps  = 50, # because there are 325 training batches
     val_check_interval = 1.0,
     # limit_val_batches  = 1000,
     strategy  ='ddp',
