@@ -45,7 +45,7 @@ if __name__ == '__main__':
     pred_cg = []
     with torch.inference_mode():
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
-            pred_cg_i = ucg2cg_generator.generate(batch.to(device), num_steps=128)
+            pred_cg_i = ucg2cg_generator.generate(batch.to(device), num_steps=500)
             pred_cg.append(pred_cg_i.cpu())
 
     # Concatenate the generation outputs per GPU process
@@ -58,6 +58,6 @@ if __name__ == '__main__':
 
     # Save generation outputs
     if rank == 0:
-        np.save(os.path.join(args.out_dir, 'pred-cg.npy'), all_pred_cg)
+        np.save(os.path.join(args.out_dir, 'pred-cg-500.npy'), all_pred_cg)
 
     torch.distributed.destroy_process_group()
