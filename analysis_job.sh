@@ -1,9 +1,9 @@
 #!/bin/bash
-#BSUB -nnodes 8             # Number of nodes
+#BSUB -nnodes 1             # Number of nodes
 #BSUB -W 12:00              # Walltime
 #BSUB -G cancer             # Account
-#BSUB -J ucg2cg
-#BSUB -o ucg2cg-%J.log
+#BSUB -J distributed-analysis
+#BSUB -o distributed-analysis-%J.log
 #BSUB -q pbatch             # Queue to use
 #BSUB -alloc_flags ipisolate
 
@@ -27,5 +27,7 @@ echo "First host: $firsthost"
 export MASTER_ADDR=$firsthost
 export MASTER_PORT=23456
 
-# Train
-lrun -T4 --gpubind=off python ./lit_ras/model_analysis.py
+## Launch multi-GPU generation
+lrun -T4 --gpubind=off python ./lit_ras/model_analysis_distributed.py \
+    --out-filename /p/gpfs1/ipe1/LLNLMLBackmapping/distributed_analysis_test.png \
+    --cg-generator /p/gpfs1/ipe1/LLNLMLBackmapping/lit_logs/ras-raf-test/version_4/checkpoints/epoch=1800-step=585325.ckpt

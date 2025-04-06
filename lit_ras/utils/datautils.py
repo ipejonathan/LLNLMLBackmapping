@@ -2,7 +2,7 @@ import itertools
 from collections import defaultdict
 import numpy as np
 import logging
-
+import torch
 LOGGER = logging.getLogger(__name__)
 
 
@@ -278,6 +278,13 @@ class DataUtils:
         assert x.ndim == 3, 'Expect (n, m, d) arrays: n = num_data, m = num_points, d = dim_points'
         d = np.square(x - y).sum(axis=-1)   # compute the squared distance
         return np.sqrt(d.mean(axis=-1))     # compute the mean over all points
+    
+    @staticmethod
+    def rmsd_torch(x, y):
+        assert x.shape == y.shape
+        assert x.ndim == 3, 'Expect (n, m, d) arrays: n = num_data, m = num_points, d = dim_points'
+        d = torch.square(x - y).sum(dim=-1)   # compute the squared distance
+        return torch.sqrt(d.mean(dim=-1))     # compute the mean over all points
 
     @staticmethod
     def rmsd_dist(x, y):
