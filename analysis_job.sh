@@ -29,5 +29,5 @@ export MASTER_PORT=23456
 
 ## Launch multi-GPU generation
 lrun -T4 --gpubind=off python ./lit_ras/model_analysis_distributed.py \
-    --out-filename /p/gpfs1/ipe1/LLNLMLBackmapping/distributed_analysis_test.png \
-    --cg-generator /p/gpfs1/ipe1/LLNLMLBackmapping/lit_logs/ras-raf-test/version_4/checkpoints/epoch=1800-step=585325.ckpt
+    --out-filename /p/gpfs1/ipe1/LLNLMLBackmapping/model_exp3_rmsd_analysis.png \
+    --cg-generator /p/gpfs1/ipe1/LLNLMLBackmapping/lit_logs/ras-raf-test/version_5/checkpoints/epoch=379-step=123500.ckpt
