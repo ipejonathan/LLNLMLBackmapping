@@ -48,8 +48,8 @@ if __name__ == '__main__':
             pred_cg_disp = pred_cg_disp[:,-1,:,:]
 
             scatter_idx = ucg2cg_generator.scatter_idx.to(device)
-
-            pred_cg_pos = batch[:,scatter_idx,:] + pred_cg_disp
+            ucg_pos = batch.to(device)
+            pred_cg_pos = ucg_pos[:,scatter_idx,:] + pred_cg_disp
             pred_cg.append(pred_cg_pos.cpu())
 
     # Concatenate the generation outputs per GPU process
