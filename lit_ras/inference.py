@@ -34,7 +34,6 @@ if __name__ == '__main__':
     data = np.load(args.ucg_file, allow_pickle=True)
     ucg_pos_traj = data['positions_ucg']
     # print(f'Loaded {v.shape[0]} descriptors (v)', flush=True)
-    # TODO: load npz file into dataloader (no need to pass into dataset since generate only needs ucg_pos as tensor input)
     loader = DataLoader(ucg_pos_traj, batch_size=32)
 
     # Model setup
@@ -45,8 +44,10 @@ if __name__ == '__main__':
     pred_cg = []
     with torch.inference_mode():
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
-            pred_cg_i = ucg2cg_generator.generate(batch.to(device), num_steps=500)
-            pred_cg.append(pred_cg_i.cpu())
+            pred_cg_disp = ucg2cg_generator.generate(batch.to(device), num_steps=500)
+            pred_cg_disp = pred_cg_disp[:,-1,:,:]
+            pred_cg_pos = batch['ucg_pos'][:,batch['scatter_idx'][0,:],:] + pred_cg_disp
+            pred_cg.append(pred_cg_pos.cpu())
 
     # Concatenate the generation outputs per GPU process
     pred_cg = torch.cat(pred_cg)
