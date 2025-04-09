@@ -83,6 +83,7 @@ class UCG2CGDataset(Dataset):
         return {
             'ucg_pos': ucg_pos,
             'cg_disp': cg_disp,
+            'scatter_idx': self.scatter_idx,
             'cg_pos': ucg_pos[self.scatter_idx] + cg_disp,
             'origin': origin,
         }
