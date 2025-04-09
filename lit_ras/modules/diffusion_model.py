@@ -117,11 +117,17 @@ class LitUCG2CGNoiseNet(L.LightningModule):
         data = data["indices_per_cluster"]
         for i in range(data.shape[0]):
             ucg_sizes.append(len(data[i]))
-        
-        # with open(ucg_index_file, 'r') as f:
-        #     for line in f:
-        #         ucg_sizes.append(len(line.rstrip().split(',')))
 
+        # Get scatter indices
+        # Flatten UCG indices
+        self.ucg_flat_idx = np.concatenate(data)
+        # Get scatter indices from ucg_idx
+        num_cgs = len(self.ucg_flat_idx)
+        self.scatter_idx = torch.zeros(num_cgs, dtype=torch.long)
+        for i, indices in enumerate(data):
+            self.scatter_idx[indices] = i
+        # Reorder scatter_idx
+        self.scatter_idx, _ = self.scatter_idx.sort()
 
         # Core model
         self.model = TransformerBackbone(

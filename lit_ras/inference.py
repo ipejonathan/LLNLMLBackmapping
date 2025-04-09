@@ -46,7 +46,10 @@ if __name__ == '__main__':
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
             pred_cg_disp = ucg2cg_generator.generate(batch.to(device), num_steps=500)
             pred_cg_disp = pred_cg_disp[:,-1,:,:]
-            pred_cg_pos = batch['ucg_pos'][:,batch['scatter_idx'][0,:],:] + pred_cg_disp
+
+            scatter_idx = ucg2cg_generator.scatter_idx.to(device)
+
+            pred_cg_pos = batch[:,scatter_idx,:] + pred_cg_disp
             pred_cg.append(pred_cg_pos.cpu())
 
     # Concatenate the generation outputs per GPU process
