@@ -82,6 +82,8 @@ if __name__ == '__main__':
     torch.distributed.all_gather(gather_list, all_rmsds)
     all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
 
+
+if rank == 0:
     # Plotting
     title = "Validation RMSD Distribution - " + str(128) + " steps"
     plot_rmsds(all_rmsds_gpu, title=title, filename=args.out_filename)
