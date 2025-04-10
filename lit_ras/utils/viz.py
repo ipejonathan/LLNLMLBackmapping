@@ -669,6 +669,43 @@ def plot_difference_distance_matrix(matrix, filename, title, show):
         plt.show()
     plt.close()
 
+
+def plot_rmsds_nice(data, title, filename, nbins=30, ref=None, show=True):
+    assert isinstance(data, np.ndarray)
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+
+    # Use log scale on y-axis
+    ax.set_yscale('log')
+
+    # Histogram
+    counts, bins, _ = ax.hist(data, bins=nbins, density=False, color='steelblue', edgecolor='black')
+
+    # Add text labels (optional, less cluttered for log scale)
+    for i in range(nbins):
+        if counts[i] > 0:
+            ax.text(bins[i], counts[i], f"{int(counts[i])}", fontsize=7, rotation=90, va='bottom')
+
+    # Reference line
+    if ref is not None:
+        ax.axvline(x=ref, color='r', linestyle='--', linewidth=1.5)
+
+    # Labels and Title
+    ax.set_xlabel('Error – RMSD (Ångström)\n({} structures)'.format(data.shape[0]), fontsize=14)
+    ax.set_ylabel('Frequency', fontsize=14)
+    ax.set_title(title, fontsize=16)
+
+    # Format y-axis ticks as powers of 10
+    ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda y, _: f'$10^{{{int(np.log10(y))}}}$' if y > 0 else '0'))
+
+    # Save + Show
+    plt.tight_layout()
+    plt.savefig(filename, bbox_inches='tight')
+    if show:
+        plt.show()
+    plt.close()
+
+
 def plot_rmsds(data, title, filename, nbins=30, ref=None, show=True):
 
     assert isinstance(data, np.ndarray)
@@ -687,14 +724,7 @@ def plot_rmsds(data, title, filename, nbins=30, ref=None, show=True):
     # axs.set_xlabel('Error - RMSD (Ångström) ({} structures)'.format(data.shape[0]))
     axs.set_title(title)
 
-    # plt.xticks([0, 2, 4, 6, 8, 10])
-    # plt.xlim(0, 10)
-    # plt.ylim(0, 5000)
-    # # plt.xticks([0, 20, 40, 60, 80, 100])
-    # # plt.xlim(0, 100)
-
     # # plt.ylim((pow(10,-1),pow(10,5)))
-
 
     # plt.rcParams.update({'font.size': 20})
     plt.savefig(filename, bbox_inches='tight')

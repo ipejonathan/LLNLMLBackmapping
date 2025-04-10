@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from modules.diffusion_model import LitUCG2CGNoiseNet
 from datamodules.ucg2cg import UCG2CGDataModule
 from glob import glob
-from utils.viz import plot_rmsds
+from utils.viz import plot_rmsds_nice
 
 from utils.datautils import DataUtils
 # LC hack for distributed setup
@@ -86,4 +86,4 @@ if __name__ == '__main__':
 if rank == 0:
     # Plotting
     title = "Validation RMSD Distribution - " + str(128) + " steps"
-    plot_rmsds(all_rmsds_gpu, title=title, filename=args.out_filename)
+    plot_rmsds_nice(all_rmsds_gpu, title=title, filename=args.out_filename)
