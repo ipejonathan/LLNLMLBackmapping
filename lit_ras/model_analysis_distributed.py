@@ -83,7 +83,9 @@ if __name__ == '__main__':
     all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
 
 
-if rank == 0:
-    # Plotting
-    title = "Validation RMSD Distribution - " + str(128) + " steps"
-    plot_rmsds_nice(all_rmsds_gpu, title=title, filename=args.out_filename)
+    if rank == 0:
+        # Plotting
+        title = "Validation RMSD Distribution - " + str(128) + " steps"
+        plot_rmsds_nice(all_rmsds_gpu, title=title, filename=args.out_filename)
+
+    torch.distributed.destroy_process_group()
