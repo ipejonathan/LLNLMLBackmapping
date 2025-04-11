@@ -80,10 +80,10 @@ if __name__ == '__main__':
     # Gather up all outputs from all GPUs
     gather_list = [torch.zeros_like(all_rmsds) for _ in range(world_size)]
     torch.distributed.all_gather(gather_list, all_rmsds)
-    all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
-
 
     if rank == 0:
+        all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
+
         # Plotting
         title = "Validation RMSD Distribution - " + str(128) + " steps"
         plot_rmsds_nice(all_rmsds_gpu, title=title, filename=args.out_filename)
