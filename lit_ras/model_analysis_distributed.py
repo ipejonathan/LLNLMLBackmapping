@@ -64,7 +64,7 @@ if __name__ == '__main__':
             ucg_pos = batch["ucg_pos"].to(device)  # shape: (B, N, 3)
             cg_disp = batch["cg_disp"].to(device)    # shape: (B, N, 3)
 
-            pred_cg_i = ucg2cg_generator.generate(ucg_pos, num_steps=128)
+            pred_cg_i = ucg2cg_generator.generate(ucg_pos, num_steps=500)
             
             # take the last frame
             pred_cg_disp = pred_cg_i[:,-1,:,:]
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
 
         # Plotting
-        title = "Validation RMSD Distribution - " + str(128) + " steps"
+        title = "Validation RMSD Distribution - " + str(500) + " steps"
         plot_rmsds_nice(all_rmsds_gpu, title=title, filename=args.out_filename)
 
     torch.distributed.destroy_process_group()
