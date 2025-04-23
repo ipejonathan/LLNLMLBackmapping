@@ -2,6 +2,7 @@
 lightning_logs/
 lit_logs/
 lit_ras/.DS_Store
+/plots
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
