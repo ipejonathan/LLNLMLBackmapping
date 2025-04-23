@@ -46,7 +46,7 @@ if __name__ == '__main__':
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
             ucg_pos = batch.to(device)
             pred_cg_disp = ucg2cg_generator.generate(ucg_pos, num_steps=500)
-            # pred_cg_disp = pred_cg_disp[:,-1,:,:]
+
             B, T, N_cg, D = pred_cg_disp.shape
             N_ucg = ucg_pos.shape[1]            # e.g., 40
 
@@ -66,33 +66,12 @@ if __name__ == '__main__':
                 index=scatter_idx_expanded.unsqueeze(-1).expand(-1, -1, -1, 3)
             )  # (B, T, 751, 3)
 
-            final_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
-            final_ucg_ref = ucg_ref_pos[:, -1, :, :]   # (B, 751, 3)
-            pred_cg_pos = final_ucg_ref + final_cg_disp
+            # final_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
+            # final_ucg_ref = ucg_ref_pos[:, -1, :, :]   # (B, 751, 3)
+            # pred_cg_pos = final_ucg_ref + final_cg_disp
+            pred_cg_pos = ucg_ref_pos + pred_cg_disp
 
-
-            # pred_cg_pos = pred_cg_pos[:,-1,:,:]
-
-            # scatter_idx = ucg2cg_generator.scatter_idx.to(device)
-            # ucg_pos = batch.to(device)
-            # pred_cg_pos = ucg_pos[:,scatter_idx,:] + pred_cg_disp
             pred_cg.append(pred_cg_pos.cpu())
-
-            # ucg_pos = batch.to(device)  # (B, 40, 3)
-            # pred_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
-
-            # scatter_idx = ucg2cg_generator.scatter_idx.to(device).contiguous()  # (751,)
-            # scatter_idx_batched = scatter_idx.unsqueeze(0).expand(ucg_pos.size(0), -1).contiguous()
-
-            # ucg_ref_pos = torch.gather(
-            #     ucg_pos,
-            #     dim=1,
-            #     index=scatter_idx_batched.unsqueeze(-1).expand(-1, -1, 3).contiguous()
-            # )  # (B, 751, 3)
-
-            # pred_cg_pos = ucg_ref_pos + pred_cg_disp
-            # pred_cg.append(pred_cg_pos.cpu())
-
 
     # Concatenate the generation outputs per GPU process
     pred_cg = torch.cat(pred_cg)
