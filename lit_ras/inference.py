@@ -44,27 +44,37 @@ if __name__ == '__main__':
     pred_cg = []
     with torch.inference_mode():
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
-            pred_cg_disp = ucg2cg_generator.generate(batch.to(device), num_steps=500)
+            ucg_pos = batch.to(device)
+            pred_cg_disp = ucg2cg_generator.generate(ucg_pos, num_steps=500)
             # pred_cg_disp = pred_cg_disp[:,-1,:,:]
+            B, T, N, D = pred_cg_disp.shape
+            scatter_idx = ucg2cg_generator.scatter_idx.to(ucg_pos.device).contiguous()
+            scatter_idx = scatter_idx.unsqueeze(0).expand(B, -1).contiguous()
+            ucg_scattered = torch.gather(ucg_pos, dim=1, index=scatter_idx.unsqueeze(-1).expand(-1, -1, 3).contiguous())
+            ucg_scattered = ucg_scattered.unsqueeze(1).expand(-1, T, -1, -1)
+            pred_cg_pos = ucg_scattered + pred_cg_disp
+
+
 
             # scatter_idx = ucg2cg_generator.scatter_idx.to(device)
             # ucg_pos = batch.to(device)
             # pred_cg_pos = ucg_pos[:,scatter_idx,:] + pred_cg_disp
-            # pred_cg.append(pred_cg_pos.cpu())
-            ucg_pos = batch.to(device)  # (B, 40, 3)
-            pred_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
-
-            scatter_idx = ucg2cg_generator.scatter_idx.to(device).contiguous()  # (751,)
-            scatter_idx_batched = scatter_idx.unsqueeze(0).expand(ucg_pos.size(0), -1).contiguous()
-
-            ucg_ref_pos = torch.gather(
-                ucg_pos,
-                dim=1,
-                index=scatter_idx_batched.unsqueeze(-1).expand(-1, -1, 3).contiguous()
-            )  # (B, 751, 3)
-
-            pred_cg_pos = ucg_ref_pos + pred_cg_disp
             pred_cg.append(pred_cg_pos.cpu())
+
+            # ucg_pos = batch.to(device)  # (B, 40, 3)
+            # pred_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
+
+            # scatter_idx = ucg2cg_generator.scatter_idx.to(device).contiguous()  # (751,)
+            # scatter_idx_batched = scatter_idx.unsqueeze(0).expand(ucg_pos.size(0), -1).contiguous()
+
+            # ucg_ref_pos = torch.gather(
+            #     ucg_pos,
+            #     dim=1,
+            #     index=scatter_idx_batched.unsqueeze(-1).expand(-1, -1, 3).contiguous()
+            # )  # (B, 751, 3)
+
+            # pred_cg_pos = ucg_ref_pos + pred_cg_disp
+            # pred_cg.append(pred_cg_pos.cpu())
 
 
     # Concatenate the generation outputs per GPU process
