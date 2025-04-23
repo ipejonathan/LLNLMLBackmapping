@@ -78,11 +78,23 @@ if __name__ == '__main__':
         all_rmsds = torch.cat(all_rmsds, dim=0)
 
     # Gather up all outputs from all GPUs
-    gather_list = [torch.zeros_like(all_rmsds) for _ in range(world_size)]
-    torch.distributed.all_gather(gather_list, all_rmsds)
+    # gather_list = [torch.zeros_like(all_rmsds) for _ in range(world_size)]
+    # torch.distributed.all_gather(gather_list, all_rmsds)
+    # Convert to list of floats for gather_object
+    all_rmsds_list = all_rmsds.cpu().tolist()
+
+    # Gather only on rank 0
+    gather_list = None
+    if rank == 0:
+        gather_list = [None for _ in range(world_size)]
+
+    torch.distributed.gather_object(all_rmsds_list, gather_list, dst=0)
+
 
     if rank == 0:
-        all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
+        # all_rmsds_gpu = torch.cat([t.cpu() for t in gather_list]).numpy()
+        all_rmsds_flat = [r for sublist in gather_list for r in sublist]
+        all_rmsds_gpu = np.array(all_rmsds_flat)
 
         # Plotting
         title = "Validation RMSD Distribution - " + str(500) + " steps"

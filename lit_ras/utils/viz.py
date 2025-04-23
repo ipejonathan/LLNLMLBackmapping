@@ -682,16 +682,16 @@ def plot_rmsds_nice(data, title, filename, nbins=30, ref=None, show=True):
     counts, bins, _ = ax.hist(data, bins=nbins, density=False, color='steelblue', edgecolor='black')
 
     # Add text labels (optional, less cluttered for log scale)
-    for i in range(nbins):
-        if counts[i] > 0:
-            ax.text(bins[i], counts[i], f"{int(counts[i])}", fontsize=7, rotation=90, va='bottom')
+    # for i in range(nbins):
+    #     if counts[i] > 0:
+    #         ax.text(bins[i], counts[i], f"{int(counts[i])}", fontsize=7, rotation=90, va='bottom')
 
     # Reference line
     if ref is not None:
         ax.axvline(x=ref, color='r', linestyle='--', linewidth=1.5)
 
     # Labels and Title
-    ax.set_xlabel('Error – RMSD (Ångström)\n({} structures)'.format(data.shape[0]), fontsize=14)
+    ax.set_xlabel('Error – RMSD (Ångström)\n ({} structures)'.format(data.shape[0]), fontsize=14)
     ax.set_ylabel('Frequency', fontsize=14)
     ax.set_title(title, fontsize=16)
 
@@ -700,7 +700,7 @@ def plot_rmsds_nice(data, title, filename, nbins=30, ref=None, show=True):
 
     # Save + Show
     plt.tight_layout()
-    plt.savefig(filename, bbox_inches='tight')
+    plt.savefig(filename, dpi=600, bbox_inches='tight')
     if show:
         plt.show()
     plt.close()
