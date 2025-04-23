@@ -54,7 +54,7 @@ if __name__ == '__main__':
             ucg_scattered = ucg_scattered.unsqueeze(1).expand(-1, T, -1, -1)
             pred_cg_pos = ucg_scattered + pred_cg_disp
 
-
+            pred_cg_pos = pred_cg_pos[:,-1,:,:]
 
             # scatter_idx = ucg2cg_generator.scatter_idx.to(device)
             # ucg_pos = batch.to(device)
