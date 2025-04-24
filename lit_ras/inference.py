@@ -45,6 +45,8 @@ if __name__ == '__main__':
     with torch.inference_mode():
         for batch in tqdm(loader, position=rank, desc=f'GPU {rank}'):
             ucg_pos = batch.to(device)
+            origin = ucg_pos.mean(dim=1, keepdim=True)
+            ucg_pos = ucg_pos - origin
             pred_cg_disp = ucg2cg_generator.generate(ucg_pos, num_steps=500)
 
             B, T, N_cg, D = pred_cg_disp.shape
@@ -66,10 +68,10 @@ if __name__ == '__main__':
                 index=scatter_idx_expanded.unsqueeze(-1).expand(-1, -1, -1, 3)
             )  # (B, T, 751, 3)
 
-            # final_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
-            # final_ucg_ref = ucg_ref_pos[:, -1, :, :]   # (B, 751, 3)
-            # pred_cg_pos = final_ucg_ref + final_cg_disp
-            pred_cg_pos = ucg_ref_pos + pred_cg_disp
+            final_cg_disp = pred_cg_disp[:, -1, :, :]  # (B, 751, 3)
+            final_ucg_ref = ucg_ref_pos[:, -1, :, :]   # (B, 751, 3)
+            pred_cg_pos = final_ucg_ref + final_cg_disp
+            # pred_cg_pos = ucg_ref_pos + pred_cg_disp
 
             pred_cg.append(pred_cg_pos.cpu())
 
