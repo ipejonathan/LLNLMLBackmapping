@@ -34,7 +34,10 @@ if __name__ == '__main__':
     data = np.load(args.ucg_file, allow_pickle=True)
     ucg_pos_traj = data['positions_ucg']
     # print(f'Loaded {v.shape[0]} descriptors (v)', flush=True)
-    loader = DataLoader(ucg_pos_traj, batch_size=32)
+    # SHARD the data
+    local_data = ucg_pos_traj[rank::world_size]  # even split across GPUs
+    loader = DataLoader(local_data, batch_size=32)
+    # loader = DataLoader(ucg_pos_traj, batch_size=32)
 
     # Model setup
     ucg2cg_generator = LitUCG2CGNoiseNet.load_from_checkpoint(args.cg_generator, ucg_index_file="/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz").to(device)
