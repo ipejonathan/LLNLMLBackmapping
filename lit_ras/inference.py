@@ -75,16 +75,29 @@ if __name__ == '__main__':
 
             pred_cg.append(pred_cg_pos.cpu())
 
-    # Concatenate the generation outputs per GPU process
+    
+    # Concatenate local results
     pred_cg = torch.cat(pred_cg)
+    local_pred = pred_cg.numpy()
 
-    # Gather up all outputs from all GPUs
-    gather_list = [torch.zeros_like(pred_cg) for _ in range(world_size)]
-    torch.distributed.all_gather(gather_list, pred_cg)
-    all_pred_cg = torch.cat(gather_list).numpy()
+    # Gather results from all ranks
+    gathered = [None for _ in range(world_size)]
+    torch.distributed.all_gather_object(gathered, local_pred)
 
-    # Save generation outputs
     if rank == 0:
+        all_pred_cg = np.concatenate(gathered, axis=0)
         np.save(os.path.join(args.out_dir, 'pred-cg-500.npy'), all_pred_cg)
+
+    # # Concatenate the generation outputs per GPU process
+    # pred_cg = torch.cat(pred_cg)
+
+    # # Gather up all outputs from all GPUs
+    # gather_list = [torch.zeros_like(pred_cg) for _ in range(world_size)]
+    # torch.distributed.all_gather(gather_list, pred_cg)
+    # all_pred_cg = torch.cat(gather_list).numpy()
+
+    # # Save generation outputs
+    # if rank == 0:
+    #     np.save(os.path.join(args.out_dir, 'pred-cg-500.npy'), all_pred_cg)
 
     torch.distributed.destroy_process_group()
