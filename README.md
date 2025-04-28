@@ -48,14 +48,14 @@ The core model leverages a **Transformer-based diffusion framework** to backmap 
 
 ## Quick Start
 
-### Local Testing (small sample data)
+### Testing Training (Local)
 
 ```bash
 python lit_ras/train_local.py
 ```
 
 - Runs on CPU or MPS (Mac GPU backend)
-- Uses `sample-data/`
+- Only use small sample data in `sample-data/`
 - For **debugging/testing only**, **not real training**
 
 ### Full Training (Lassen Cluster)
@@ -71,7 +71,14 @@ bsub < jobs/training_job.sh
 - Trains model with `train_lassen.py`
 - Checkpoints saved in `./lit_logs/`
 
-### Inference (Generate CG Structures)
+### Testing Inference: Generate CG Structures (Local - Jupyter Notebook)
+
+The repository includes `inference_test.ipynb` outside the `lit_ras/` directory. This notebook:
+- Can be used to test the inference script locally using the `sample-data/`
+- Visualizes the protein structure during the diffusion process across defined timesteps
+- Provides an interactive way to evaluate model predictions
+
+### Full Inference: Generate CG Structures (Lassen Cluster)
 
 Submit distributed inference job:
 
@@ -116,6 +123,15 @@ python lit_ras/model_analysis_distributed.py \
 | `train_local.py` + `sample-data/` | For **testing and debugging only** |
 | `train_lassen.py` + `/p/gpfs1/splash/hmc_project/...` | For **real model training and inference** |
 
+### Lassen Account Configuration
+
+In all job scripts (`.sh` files), the Anaconda environment is activated using:
+```bash
+source /usr/workspace/ipe1/anaconda/bin/activate
+```
+
+**Important:** Replace `ipe1` with your own Lassen username in all job scripts.
+
 ## Requirements
 
 - Python 3.8+
@@ -136,28 +152,30 @@ python lit_ras/model_analysis_distributed.py \
 ## Folder Structure
 
 ```
-lit_ras/
-├── datamodules/
-│   └── ucg2cg.py
-├── modules/
-│   └── diffusion_model.py
-├── graphite/
-│   ├── diffusion/
-│   │   └── general.py
-│   └── nn/
-│       └── basis.py
-├── utils/
-│   ├── datautils.py
-│   └── viz.py
-├── train_local.py
-├── train_lassen.py
-├── inference.py
-├── model_analysis.py
-├── model_analysis_distributed.py
-jobs/
-├── training_job.sh
-├── inference_job.sh
-├── analysis_job.sh
+├── lit_ras/
+│   ├── datamodules/
+│   │   └── ucg2cg.py
+│   ├── modules/
+│   │   └── diffusion_model.py
+│   ├── graphite/
+│   │   ├── diffusion/
+│   │   │   └── general.py
+│   │   └── nn/
+│   │       └── basis.py
+│   ├── utils/
+│   │   ├── datautils.py
+│   │   └── viz.py
+│   ├── train_local.py
+│   ├── train_lassen.py
+│   ├── inference.py
+│   ├── model_analysis.py
+│   └── model_analysis_distributed.py
+├── jobs/
+│   ├── training_job.sh
+│   ├── inference_job.sh
+│   └── analysis_job.sh
+├── inference_test.ipynb
+└── sample-data/
 ```
 
 ## Acknowledgments
