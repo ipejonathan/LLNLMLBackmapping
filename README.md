@@ -29,23 +29,6 @@ The core model leverages a **Transformer-based diffusion framework** to backmap 
 | **Inference script** (`inference.py`) | Generate CG structures from UCG input |
 | **Analysis scripts** (`model_analysis.py`, `model_analysis_distributed.py`) | Evaluate model performance |
 
-## Inputs
-
-| File/Directory | Purpose |
-|----------------|---------|
-| **sample-data/** | **(Testing only)** Small toy dataset for local debugging |
-| **/p/gpfs1/splash/hmc_project/...** | Real CG and UCG datasets for training and inference |
-| **/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz** | Mapping of CG beads to UCG beads |
-
-## Outputs
-
-| Output | Description |
-|--------|------------|
-| `pred-cg-500.npy` | Predicted CG structures generated from UCG input |
-| `val_rmsds_500.png` | RMSD distribution plot from validation |
-| `distributed-analysis-*.log` | Job logs for distributed analysis |
-| `v2cg-*.log` | Logs for inference jobs |
-
 ## Quick Start
 
 ### Testing Training (Local)
@@ -115,6 +98,25 @@ python lit_ras/model_analysis_distributed.py \
 ```
 - Gathers RMSD statistics across GPUs
 - Saves plot for validation
+
+
+## Inputs
+
+| File/Directory | Purpose |
+|----------------|---------|
+| **sample-data/** | **(Testing only)** Small toy dataset for local debugging |
+| **/p/gpfs1/splash/hmc_project/...** | Real CG and UCG datasets for training and inference |
+| **/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz** | Mapping of CG beads to UCG beads |
+
+## Outputs
+
+| Output | Description |
+|--------|------------|
+| `pred-cg-500.npy` | Predicted CG structures generated from UCG input |
+| `val_rmsds_500.png` | RMSD distribution plot from validation |
+| `distributed-analysis-*.log` | Job logs for distributed analysis |
+| `v2cg-*.log` | Logs for inference jobs |
+
 
 ## Important Clarifications
 
