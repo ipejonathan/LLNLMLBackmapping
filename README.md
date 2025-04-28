@@ -1,12 +1,9 @@
-```markdown
 # mini-MuMMI: UCG-to-CG Backmapping Model
 
 This repository implements a deep learning-based **UCG-to-CG backmapping model** for multiscale molecular dynamics simulations.  
 It is part of the **Mini-MuMMI** project, designed to extend multiscale protein modeling workflows by enabling efficient **reconstruction of coarse-grained (CG) protein structures** from ultra-coarse-grained (UCG) representations.
 
 The core model leverages a **Transformer-based diffusion framework** to backmap UCG positions into detailed CG bead structures, allowing seamless transitions between simulation resolutions.
-
----
 
 ## Overview of System Architecture
 
@@ -23,7 +20,7 @@ The core model leverages a **Transformer-based diffusion framework** to backmap 
 ### Components
 
 | Component | Description |
-|:----------|:-------------|
+|-----------|-------------|
 | **Data Module** (`datamodules/ucg2cg.py`) | Loads UCG and CG data for training, validation, inference |
 | **Model** (`modules/diffusion_model.py`) | Transformer + Diffusion model for noise prediction |
 | **Diffuser** (`graphite/diffusion/general.py`) | Implements forward and reverse stochastic processes |
@@ -32,28 +29,22 @@ The core model leverages a **Transformer-based diffusion framework** to backmap 
 | **Inference script** (`inference.py`) | Generate CG structures from UCG input |
 | **Analysis scripts** (`model_analysis.py`, `model_analysis_distributed.py`) | Evaluate model performance |
 
----
-
 ## Inputs
 
 | File/Directory | Purpose |
-|:---------------|:--------|
+|----------------|---------|
 | **sample-data/** | **(Testing only)** Small toy dataset for local debugging |
 | **/p/gpfs1/splash/hmc_project/...** | Real CG and UCG datasets for training and inference |
 | **/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz** | Mapping of CG beads to UCG beads |
 
----
-
 ## Outputs
 
 | Output | Description |
-|:-------|:------------|
+|--------|------------|
 | `pred-cg-500.npy` | Predicted CG structures generated from UCG input |
 | `val_rmsds_500.png` | RMSD distribution plot from validation |
 | `distributed-analysis-*.log` | Job logs for distributed analysis |
 | `v2cg-*.log` | Logs for inference jobs |
-
----
 
 ## Quick Start
 
@@ -67,8 +58,6 @@ python lit_ras/train_local.py
 - Uses `sample-data/`
 - For **debugging/testing only**, **not real training**
 
----
-
 ### Full Training (Lassen Cluster)
 
 Submit distributed training job:
@@ -81,8 +70,6 @@ bsub < jobs/training_job.sh
 - Uses real full datasets under `/p/gpfs1/splash/hmc_project/...`
 - Trains model with `train_lassen.py`
 - Checkpoints saved in `./lit_logs/`
-
----
 
 ### Inference (Generate CG Structures)
 
@@ -104,8 +91,6 @@ python lit_ras/inference.py \
 - Input: Real UCG trajectory `.npz`
 - Output: Predicted CG bead structure `.npy` file
 
----
-
 ### Model Evaluation (RMSD Analysis)
 
 Submit distributed RMSD analysis job:
@@ -124,16 +109,12 @@ python lit_ras/model_analysis_distributed.py \
 - Gathers RMSD statistics across GPUs
 - Saves plot for validation
 
----
-
 ## Important Clarifications
 
 | Environment | Data Used |
-|:------------|:----------|
+|-------------|-----------|
 | `train_local.py` + `sample-data/` | For **testing and debugging only** |
 | `train_lassen.py` + `/p/gpfs1/splash/hmc_project/...` | For **real model training and inference** |
-
----
 
 ## Requirements
 
@@ -144,17 +125,13 @@ python lit_ras/model_analysis_distributed.py \
 - Conda environment `opence-1.9.1`
 - LLNL Cluster (e.g., Lassen) with `lrun`, `bsub`, multi-GPU support
 
----
-
 ## Batch Scripts Summary
 
 | Script | Purpose |
-|:-------|:--------|
+|--------|---------|
 | `training_job.sh` | Distributed training using `train_lassen.py` |
 | `inference_job.sh` | Distributed inference using `inference.py` |
 | `analysis_job.sh` | Distributed RMSD evaluation using `model_analysis_distributed.py` |
-
----
 
 ## Folder Structure
 
@@ -183,10 +160,6 @@ jobs/
 ├── analysis_job.sh
 ```
 
----
-
 ## Acknowledgments
 
 This work is part of the Mini-MuMMI project at Harvey Mudd College and Lawrence Livermore National Laboratory.
----
-```
