@@ -1,4 +1,15 @@
 #!/bin/bash
+# training_job.sh
+#
+# Batch script to launch distributed training on Lassen using train_lassen.py.
+#
+# - Requests resources for distributed multi-node, multi-GPU training
+# - Loads Python environment
+# - Configures distributed setup variables
+# - Launches PyTorch Lightning training
+
+####################### LSF Job Directives #######################
+
 #BSUB -nnodes 8             # Number of nodes
 #BSUB -W 12:00              # Walltime
 #BSUB -G cancer             # Account
@@ -7,15 +18,19 @@
 #BSUB -q pbatch             # Queue to use
 #BSUB -alloc_flags ipisolate
 
+####################### System Setup #######################
+
 # Raise the number of maxium open files (to be memory-mapped)
 # ulimit -n 20000
 
-# Load Python environment
+# Load Anaconda environment
 source /usr/workspace/ipe1/anaconda/bin/activate
 module load cuda/11.8.0
 conda activate opence-1.9.1
 
-# Just to record each node we're using in the job output log
+####################### Distributed Setup #######################
+
+# Record node hostnames
 lrun -T1 hostname
 
 # Get hostname of the rank-0 node
@@ -23,9 +38,11 @@ firsthost=$(lrun -N1 -n1 hostname)
 echo "First host: $firsthost"
 
 # Set MASTER_ADDR to hostname of first compute node in allocation
-# Set MASTER_PORT to any used port number
 export MASTER_ADDR=$firsthost
+
+# Set MASTER_PORT to any used port number
 export MASTER_PORT=23456
 
-# Train
+####################### Launch Distributed Training #######################
+
 lrun -T4 --gpubind=off python ./lit_ras/train_lassen.py
