@@ -24,7 +24,7 @@
 # ulimit -n 20000
 
 # Load Anaconda environment
-source /usr/workspace/ipe1/anaconda/bin/activate
+source /usr/workspace/ipe1/anaconda/bin/activate # Remember to change 'ipe1' to your own username
 module load cuda/11.8.0
 conda activate opence-1.9.1
 
@@ -45,6 +45,7 @@ export MASTER_PORT=23456
 
 ####################### Launch Multi-GPU Distributed Analysis #######################
 
+# Remember to change 'ipe1' to your own username
 lrun -T4 --gpubind=off python ./lit_ras/model_analysis_distributed.py \
     --out-filename /p/gpfs1/ipe1/LLNLMLBackmapping/model_exp2_rmsd_analysis.png \
     --cg-generator /p/gpfs1/ipe1/LLNLMLBackmapping/lit_logs/ras-raf-test/version_4/checkpoints/epoch=1800-step=585325.ckpt
