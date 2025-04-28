@@ -37,6 +37,7 @@ export MASTER_PORT=23456 # Arbitrary unused port
 
 ####################### Launch Multi-GPU Inference #######################
 
+# Remember to change 'ipe1' to your own username
 lrun -T4 --gpubind=off python ./lit_ras/inference.py \
     --ucg-file /p/gpfs1/splash/hmc_project/ucg_npz_data_ucg_40site_aligned_to_gdom_and_crd_membrane_alignment/pfpatch_000005132579_ucg.npz \
     --out-dir /p/gpfs1/ipe1/LLNLMLBackmapping \

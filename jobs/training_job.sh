@@ -24,7 +24,7 @@
 # ulimit -n 20000
 
 # Load Anaconda environment
-source /usr/workspace/ipe1/anaconda/bin/activate
+source /usr/workspace/ipe1/anaconda/bin/activate # Remember to change 'ipe1' to your own username
 module load cuda/11.8.0
 conda activate opence-1.9.1
 
