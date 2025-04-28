@@ -1,16 +1,38 @@
+"""
+ucg2cg.py
+
+Module for loading UCG and CG data for training and inference in mini-MuMMI's
+machine learning-based backmapping pipeline.
+"""
+
 import torch
 import numpy as np
-
-# Typing
 from torch import Tensor
 from typing import Tuple, List, Optional
+from torch.utils.data import Dataset
+import pytorch_lightning as L
+from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
 
 ####################### Datasets #######################
 
-from torch.utils.data import Dataset
-# from torch_scatter import scatter
-
 class UCG2CGDataset(Dataset):
+    """
+    PyTorch Dataset for UCG-to-CG backmapping tasks.
+
+    Each sample contains:
+        - UCG bead positions (centered at origin)
+        - CG bead displacements relative to UCG beads
+        - Mapping indices from CG beads to UCG beads
+
+    Attributes:
+        cg_files (List[str]): Paths to CG trajectory files (.npz).
+        ucg_files (List[str]): Paths to UCG trajectory files (.npz).
+        ucg_index_file (str): Path to file mapping CG beads to UCG clusters.
+        scale (float): Scaling factor applied to input coordinates.
+        scatter_idx (Tensor): Mapping tensor from CG beads to UCG beads.
+    """
+
     def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str, scale: float = 1.0):
         super().__init__()
         self.cg_files       = cg_files
@@ -56,27 +78,37 @@ class UCG2CGDataset(Dataset):
         self.scatter_idx, _ = self.scatter_idx.sort()
 
     def __len__(self):
+        """Returns the number of available samples."""
         return len(self.local_idx)
     
     def __getitem__(self, idx):
+        """
+        Retrieves one data sample.
+
+        Args:
+            idx (int): Sample index.
+
+        Returns:
+            dict: Contains UCG positions, CG displacements, scatter indices, centered CG positions, and UCG origin.
+        """
         global_idx = self.global_idx[idx]
         local_idx  = self.local_idx[idx]
 
-        # Extract CG pos
+        # Load CG position
         cg_pos = self.cg_pos_trajs[global_idx][local_idx] * self.scale
         cg_pos = torch.tensor(cg_pos, dtype=torch.float)
 
-        # Reorder CG pos
+        # Reorder CG beads to match UCG layout
         cg_pos = cg_pos[self.ucg_flat_idx]
 
-        # Compute UCG pos
+        # Load UCG position
         ucg_pos = self.ucg_pos_trajs[global_idx][local_idx] * self.scale
         ucg_pos = torch.tensor(ucg_pos, dtype=torch.float)
 
-        # Compute CG displacements
+        # Compute displacements between CG and UCG
         cg_disp = cg_pos - ucg_pos[self.scatter_idx]
 
-        # Center UCG pos
+        # Center UCG around origin
         origin = ucg_pos.mean(dim=0, keepdim=True)
         ucg_pos -= origin
 
@@ -88,16 +120,25 @@ class UCG2CGDataset(Dataset):
             'origin': origin,
         }
 
-
 ####################### LightningDataModules #######################
 
-import pytorch_lightning as L
-from torch.utils.data import DataLoader
-from sklearn.model_selection import train_test_split
-# from pytorch_lightning.pytorch.utilities import CombinedLoader
-
 class UCG2CGDataModule(L.LightningDataModule):
-    def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str, scale: float = 1.0, batch_size: int = 64, num_workers: int = 4, train_size: float = 0.99):
+    """
+    PyTorch Lightning DataModule to manage UCG2CG datasets.
+
+    Handles splitting into train/validation sets, DataLoader creation.
+
+    Args:
+        cg_files (List[str]): List of CG trajectory .npz files.
+        ucg_files (List[str]): List of UCG trajectory .npz files.
+        ucg_index_file (str): Path to the UCG index .npz file.
+        scale (float): Optional scaling factor for positions.
+        batch_size (int): Batch size for training/validation.
+        num_workers (int): Number of DataLoader workers.
+        train_size (float): Fraction of data to use for training.
+    """
+    def __init__(self, cg_files: List[str], ucg_files: List[str], ucg_index_file: str,
+                 scale: float = 1.0, batch_size: int = 64, num_workers: int = 4, train_size: float = 0.99):
         super().__init__()
         self.save_hyperparameters(ignore='cg_files')
 
@@ -110,22 +151,17 @@ class UCG2CGDataModule(L.LightningDataModule):
         self.train_size     = train_size
 
     def prepare_data(self):
+        """Prepare data before training. (Not used here.)"""
         # Download, IO, etc. Useful with shared filesystems
         # Only called on 1 GPU/TPU in distributed
         pass
 
     def setup(self, stage: Optional[str] = None):
-        # Make assignments here (val/train/test split)
-        # Called on every process in DDP
-        self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42)
+        """Split data into training and validation sets."""
 
-        # Zip the paired lists together before splitting
-        # paired_files = list(zip(self.cg_files, self.ucg_files))
-        # # Split into train and validation sets
-        # train_pairs, valid_pairs = train_test_split(paired_files, train_size=self.train_size, random_state=42)
-        # # Unzip the pairs back into separate lists
-        # self.cg_train_files, self.ucg_train_files = zip(*train_pairs)
-        # self.cg_valid_files, self.ucg_valid_files = zip(*valid_pairs)
+        self.cg_train_files, self.cg_valid_files, self.ucg_train_files, self.ucg_valid_files = train_test_split(
+            self.cg_files, self.ucg_files, train_size=self.train_size, random_state=42
+        )
 
         self.train_set = []
         if stage in ['fit', 'train', None]:
@@ -134,38 +170,15 @@ class UCG2CGDataModule(L.LightningDataModule):
         self.valid_set = UCG2CGDataset(self.cg_valid_files, self.ucg_valid_files, self.ucg_index_file, self.scale)
 
     def train_dataloader(self):
-        return DataLoader(self.train_set, shuffle=True,  batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True)
+        """Returns DataLoader for training."""
+        return DataLoader(self.train_set, shuffle=True,  batch_size=self.batch_size,
+                          num_workers=self.num_workers, pin_memory=True)
     
     def val_dataloader(self):
-        return DataLoader(self.valid_set, shuffle=False, batch_size=self.batch_size, num_workers=self.num_workers, pin_memory=True)
+        """Returns DataLoader for validation."""
+        return DataLoader(self.valid_set, shuffle=False, batch_size=self.batch_size,
+                          num_workers=self.num_workers, pin_memory=True)
 
     def teardown(self, stage: Optional[str] = None):
-        # Clean up state after the trainer stops, delete files...
-        # Called on every process in DDP
+        """Optional cleanup at end of training."""
         pass
-
-
-
-# datamodule = UCG2CGDataModule(
-#     cg_files       = ["sample-data/cg/pfpatch_000000000138.npz", "sample-data/cg/pfpatch_000000000214.npz", "sample-data/cg/pfpatch_000000000272.npz"],
-#     ucg_files      = ["sample-data/ucg/pfpatch_000000000138_ucg.npz", "sample-data/ucg/pfpatch_000000000214_ucg.npz", "sample-data/ucg/pfpatch_000000000272_ucg.npz"],
-#     ucg_index_file = "sample-data/cg/all_indices_per_cluster.npz",
-#     batch_size     = 64,
-#     num_workers    = 8,
-#     train_size     = 0.9,
-# )
-# datamodule.setup()
-
-# datamodule.train_dataloader()
-# print(datamodule)
-
-
-# cg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000138.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000214.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/pfpatch_000000000272.npz"]
-# ucg_idx_file = "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/cg/all_indices_per_cluster.npz"
-# ucg_files = ["/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000138_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000214_ucg.npz", "/Users/jonathan/Documents/LLNLMLBackmapping/sample-data/ucg/pfpatch_000000000272_ucg.npz"]
-# dataset = UCG2CGDataset(cg_files=cg_files, ucg_files=ucg_files, ucg_index_file=ucg_idx_file)
-
-# print(dataset)
-# print(len(dataset))
-# print(dataset[0]['ucg_pos'])
-# print(dataset[0]['cg_pos'])
