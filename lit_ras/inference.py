@@ -61,6 +61,16 @@ if __name__ == '__main__':
     ).to(device)
     ucg2cg_generator.eval()
 
+    # Load UCG index file to recover original CG bead ordering
+    ucg_index_data = np.load("/p/gpfs1/splash/hmc_project/cg_fingerprints_aligned_to_gdom_and_crd_membrane_alignment/all_indices_per_cluster.npz", allow_pickle=True)
+    ucg_idx = ucg_index_data["indices_per_cluster"]
+    ucg_flat_idx = np.concatenate(ucg_idx)
+
+    # Build inverse index mapping
+    inverse_idx = np.zeros_like(ucg_flat_idx)
+    inverse_idx[ucg_flat_idx] = np.arange(len(ucg_flat_idx))
+
+
     ####################### Start Generation #######################
     pred_cg = []
     with torch.inference_mode():
@@ -109,8 +119,17 @@ if __name__ == '__main__':
     gathered = [None for _ in range(world_size)]
     torch.distributed.all_gather_object(gathered, local_pred)
 
+    # if rank == 0:
+    #     all_pred_cg = np.concatenate(gathered, axis=0)
+    #     np.save(os.path.join(args.out_dir, 'pred-cg-500.npy'), all_pred_cg)
+
     if rank == 0:
         all_pred_cg = np.concatenate(gathered, axis=0)
-        np.save(os.path.join(args.out_dir, 'pred-cg-500.npy'), all_pred_cg)
+
+        # Reorder CG beads to match original protein_positions format
+        all_pred_cg_original = all_pred_cg[:, inverse_idx, :]
+
+        np.save(os.path.join(args.out_dir, 'pred-cg-500-original.npy'), all_pred_cg_original)
+
 
     torch.distributed.destroy_process_group()
