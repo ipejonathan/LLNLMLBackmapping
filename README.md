@@ -1,4 +1,4 @@
-# mini-MuMMI: UCG-to-CG Backmapping Model
+# UCG-mini-MuMMI: UCG-to-CG Backmapping Model
 
 This repository implements a deep learning-based **UCG-to-CG backmapping model** for multiscale molecular dynamics simulations.  
 It is part of the **Mini-MuMMI** project, designed to extend multiscale protein modeling workflows by enabling efficient **reconstruction of coarse-grained (CG) protein structures** from ultra-coarse-grained (UCG) representations.
