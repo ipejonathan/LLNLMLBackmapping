@@ -182,4 +182,4 @@ source /usr/workspace/ipe1/anaconda/bin/activate
 
 ## Acknowledgments
 
-This work is part of the Mini-MuMMI project at Harvey Mudd College and Lawrence Livermore National Laboratory.
+This work is part of the UCG-mini-MuMMI project at Harvey Mudd College Clinic Program with Lawrence Livermore National Laboratory.
