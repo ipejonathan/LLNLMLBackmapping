@@ -17,8 +17,6 @@ source /usr/workspace/ipe1/anaconda/bin/activate
 module load cuda/11.8.0
 conda activate opence-1.9.1
 
-mkdir -p "$OUTPUT_DIR"
-
 while IFS= read -r ucg_file; do
     fname=$(basename "$ucg_file" .npz)
     out_file="${OUTPUT_DIR}/${fname}_cg.npy"
