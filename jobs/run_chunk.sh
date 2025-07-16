@@ -36,9 +36,20 @@ while IFS= read -r ucg_file; do
     out_file="${OUTPUT_DIR}/${fname}_cg.npy"
     echo "Processing $ucg_file"
 
-    python "$SCRIPT" \
-        --ucg-file "$ucg_file" \
-        --out-dir "$out_file" \
-        --cg-generator "$CG_GENERATOR"
+    (
+        lrun -T4 --gpubind=off python "$SCRIPT" \
+            --ucg-file "$ucg_file" \
+            --out-dir "$out_file" \
+            --cg-generator "$CG_GENERATOR"
+
+        status=$?
+        if [[ $status -ne 0 ]]; then
+            echo "Failed: $ucg_file"
+        else
+            echo "Done: $ucg_file"
+        fi
+    )
+
+    echo
 
 done < "$CHUNK_FILE"
