@@ -23,6 +23,6 @@ while IFS= read -r ucg_file; do
     echo "Processing $ucg_file"
     lrun -T4 --gpubind=off python "$SCRIPT" \
         --ucg-file "$ucg_file" \
-        --out-file "$out_file" \
+        --out-dir "$out_file" \
         --cg-generator "$CG_GENERATOR"
 done < "$CHUNK_FILE"
