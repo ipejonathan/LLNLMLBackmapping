@@ -129,7 +129,7 @@ if __name__ == '__main__':
         # Reorder CG beads to match original protein_positions format
         all_pred_cg_original = all_pred_cg[:, inverse_idx, :]
 
-        np.save(os.path.join(args.out_dir, 'pred-cg-500-original.npy'), all_pred_cg_original)
+        np.save(args.out_dir, all_pred_cg_original)
 
 
     torch.distributed.destroy_process_group()
