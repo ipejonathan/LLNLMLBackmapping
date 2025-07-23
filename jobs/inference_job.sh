@@ -9,7 +9,7 @@
 
 ####################### LSF Job Directives #######################
 
-#BSUB -nnodes 2            # Number of nodes
+#BSUB -nnodes 1            # Number of nodes
 #BSUB -W 1:00              # Walltime
 #BSUB -G cancer            # Account
 #BSUB -J v2cg
