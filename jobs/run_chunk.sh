@@ -9,7 +9,7 @@ while IFS= read -r ucg_file; do
     # out_file="${OUTPUT_DIR}/${fname}_cg.npy"
     # echo "Processing $ucg_file"
 
-    bsub < single_inference.sh "$ucg_file"
+    bsub single_inference.sh "$ucg_file"
 
     status=$?
     if [[ $status -ne 0 ]]; then
