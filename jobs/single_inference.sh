@@ -31,6 +31,7 @@ export MASTER_ADDR=$firsthost
 export MASTER_PORT=23456 # Arbitrary unused port
 
 
+echo "Running inference on: $UCG_FILE"
 
 lrun -T4 --gpubind=off python "$SCRIPT" \
     --ucg-file "$UCG_FILE" \
